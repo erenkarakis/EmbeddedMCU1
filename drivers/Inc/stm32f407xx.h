@@ -32,10 +32,36 @@
 #define NVIC_ICER3 ((__vo uint32_t*) 0XE000E18C)
 
 /*
+ * Possible IRQ Priority numbers
+ */
+
+#define NVIC_IRQ_PRI0 0 
+#define NVIC_IRQ_PRI1 1
+#define NVIC_IRQ_PRI2 2
+#define NVIC_IRQ_PRI3 3
+#define NVIC_IRQ_PRI4 4
+#define NVIC_IRQ_PRI5 5
+#define NVIC_IRQ_PRI6 6
+#define NVIC_IRQ_PRI7 7
+#define NVIC_IRQ_PRI8 8 
+#define NVIC_IRQ_PRI9 9
+#define NVIC_IRQ_PRI10 10
+#define NVIC_IRQ_PRI11 11 
+#define NVIC_IRQ_PRI12 12
+#define NVIC_IRQ_PRI13 13
+#define NVIC_IRQ_PRI14 14
+#define NVIC_IRQ_PRI15 15
+
+/*
  * Arm Cortex Mx Processor Priority Register address
  */
 
 #define NVIC_PR_BASEADDR ((__vo uint32_t*) 0xE000E400)
+
+/*
+ * Arm Cortex Mx Processor number of priority bits implemented in Priprity Register
+ */
+#define NO_PR_BITS_IMPLEMENTED 4
 
 /*********************************************************** END Processor Specific Details END ***********************************************************/
 
@@ -117,15 +143,15 @@
  */
 typedef struct
 {
-   __vo uint32_t MODER;
-   __vo uint32_t OTYPER;
-   __vo uint32_t OSPEEDR;
-   __vo uint32_t PUPDR;
-   __vo uint32_t IDR;
-   __vo uint32_t ODR;
-   __vo uint32_t BSSR;
-   __vo uint32_t LCKR;
-   __vo uint32_t AFR[2];
+   __vo uint32_t MODER; // GPIO port mode register (GPIO_MODER) - These bits are written by software to configure the I/O direction mode
+   __vo uint32_t OTYPER; // GPIO port output type register (GPIO_OTYPER) - These bits are written by software to configure the output type of the I/O port
+   __vo uint32_t OSPEEDR; // GPIO port output speed register (GPIO_OSPEEDR) - These bits are written by software to configure the I/O output speed
+   __vo uint32_t PUPDR; // GPIO port pull-up/pull-down register (GPIO_PUPDR) - These bits are written by software to configure the I/O pull-up or pull-down
+   __vo uint32_t IDR; // GPIO port input data register (GPIO_IDR) - These bits are read-only and can be accessed in word mode only. They contain the input value of the corresponding I/O port
+   __vo uint32_t ODR; // GPIO port output data register (GPIO_ODR) - These bits can be read and written by software
+   __vo uint32_t BSSR; // GPIO port bit set/reset register (GPIO_BSSR) - Check referance manuel for details
+   __vo uint32_t LCKR; // GPIO port configuration lock register (GPIO_LCKR) - Check referance manuel for details 
+   __vo uint32_t AFR[2]; // GPIO alternate function low register - These bits are written by software to configure alternate function I/Os
 
 }GPIO_RegDef_t;
 
@@ -134,38 +160,38 @@ typedef struct
  */
 typedef struct
 {
-    __vo uint32_t CR;
-    __vo uint32_t PLLCFGR;
-    __vo uint32_t CFGR;
-    __vo uint32_t CIR;
-    __vo uint32_t AHB1RSTR;
-    __vo uint32_t AHB2RSTR;
-    __vo uint32_t AHB3RSTR;
+    __vo uint32_t CR; // RCC clock control register (RCC_CR)
+    __vo uint32_t PLLCFGR; // RCC PLL configuration register (RCC_PLLCFGR) - This register is used to configure the PLL clock outputs according to the formulas (Check referance manuel for details)
+    __vo uint32_t CFGR; // RCC clock configuration register (RCC_CFGR)
+    __vo uint32_t CIR; // RCC clock interrupt register (RCC_CIR)
+    __vo uint32_t AHB1RSTR; // RCC AHB1 peripheral reset register (RCC_AHB1RSTR)
+    __vo uint32_t AHB2RSTR; // RCC AHB2 peripheral reset register (RCC_AHB2RSTR)
+    __vo uint32_t AHB3RSTR; // RCC AHB3 peripheral reset register (RCC_AHB3RSTR)
     uint32_t RESERVED0;
-    __vo uint32_t APB1RSTR;
-    __vo uint32_t APB2RSTR;
+    __vo uint32_t APB1RSTR; // RCC APB1 peripheral reset register (RCC_APB1RSTR)
+    __vo uint32_t APB2RSTR; // RCC APB2 peripheral reset register (RCC_APB2RSTR)
     uint32_t RESERVED1[2];
-    __vo uint32_t AHB1ENR;
-    __vo uint32_t AHB2ENR;
-    __vo uint32_t AHB3ENR;
+    __vo uint32_t AHB1ENR; // RCC AHB1 peripheral clock enable register (RCC_AHB1ENR)
+    __vo uint32_t AHB2ENR; // RCC AHB2 peripheral clock enable register (RCC_AHB2ENR)
+    __vo uint32_t AHB3ENR; // RCC AHB3 peripheral clock enable register (RCC_AHB3ENR)
     uint32_t RESERVED2;
-    __vo uint32_t APB1ENR;
-    __vo uint32_t APB2ENR;
+    __vo uint32_t APB1ENR; // RCC APB1 peripheral clock enable register (RCC_APB1ENR)
+    __vo uint32_t APB2ENR; // RCC APB2 peripheral clock enable register (RCC_APB2ENR)
     uint32_t RESERVED3[2];
-    __vo uint32_t AHB1LPENR;
-    __vo uint32_t AHB2LPENR;
-    __vo uint32_t AHB3LPENR;
+    __vo uint32_t AHB1LPENR; // RCC AHB1 peripheral clock enable in low power mode register (RCC_AHB1LPENR)
+    __vo uint32_t AHB2LPENR; // RCC AHB2 peripheral clock enable in low power mode register (RCC_AHB2LPENR)
+    __vo uint32_t AHB3LPENR; // RCC AHB3 peripheral clock enable in low power mode register (RCC_AHB3LPENR)
     uint32_t RESERVED4;
-    __vo uint32_t APB1LPENR;
-    __vo uint32_t APB2LPENR;
+    __vo uint32_t APB1LPENR; // RCC APB1 peripheral clock enable in low power mode register (RCC_APB1LPENR)
+    __vo uint32_t APB2LPENR; // RCC APB2 peripheral clock enable in low power mode register (RCC_APB2LPENR)
     uint32_t RESERVED5[2];
-    __vo uint32_t BDCR;
-    __vo uint32_t CSR;
+    __vo uint32_t BDCR; // RCC Backup domain control register (RCC_BDCR)
+    __vo uint32_t CSR; // RCC clock control & status register (RCC_CSR)
     uint32_t RESERVED6[2];
-    __vo uint32_t SSCGR;
-    __vo uint32_t PLLI2SCFGR;
-    __vo uint32_t PLLSAICFGR;
-    __vo uint32_t DCKCFGR;
+    __vo uint32_t SSCGR; // RCC spread spectrum clock generation register (RCC_SSCGR)
+    __vo uint32_t PLLI2SCFGR;  // RCC PLLI2S configuration register (RCC_PLLI2SCFGR)
+    __vo uint32_t PLLSAICFGR; // RCC PLL configuration register (RCC_PLLSAICFGR)
+    __vo uint32_t DCKCFGR; // RCC Dedicated Clock Configuration Register (RCC_DCKCFGR)
  
 }RCC_RegDef_t;
 
@@ -179,7 +205,7 @@ typedef struct
     __vo uint32_t RTSR; // Rising trigger event configuration bit of line x
     __vo uint32_t FTSR; // Falling trigger event configuration bit of line x
     __vo uint32_t SWIER; // Software Interrupt on line x
-    __vo uint32_t PR; //  Pending bit
+    __vo uint32_t PR; // Pending bit
 
 }EXTI_RegDef_t;
 
